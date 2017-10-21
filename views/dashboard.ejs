@@ -37,6 +37,11 @@
     <button type="submit" id="journal-submit-button" class=""><i class="fa fa-paper-plane-o fa-lg"></i></button>
 </form>
 
+<!-- Get nearby journal entries -->
+<form id="nearby-journal-entry-form">
+    <button type="submit"><i class="fa fa-location-arrow fa-lg"></i></button>
+</form>
+
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="/javascripts/FormHandlers.js"></script>
@@ -53,6 +58,20 @@
         }
     });
 
+    // Submit the form in the background
+    submitWithGeo('#nearby-journal-entry-form', '/journal/entriesNearPoint', (responseData, formData, formElem) => {
+
+        // TODO: testing
+        console.log(responseData);
+
+        if (responseData['success'] === true) {
+            //document.getElementById('journal-entry-form').reset();
+        } else {
+            console.log(responseData);
+            alert('There was an error adding the journal entry');
+        }
+    });
+
     // Load past journal entries
     $.ajax({
         type: "get",
@@ -62,6 +81,7 @@
 
             console.log(responseData);
 
+            // TODO: Display the past journal entries
             return 0;
 
             if (responseData['success'] === true) {
