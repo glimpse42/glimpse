@@ -4,7 +4,56 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
 </head>
+
+<div class="fb-login-button" data-show-faces="true" data-width="200" data-max-rows="1">Login w/ Facebook</div>
+
+<div id="status">
+</div>
+
 <body>
+
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '643524489369797',
+            xfbml      : true,
+            version    : 'v2.10'
+        });
+        FB.AppEvents.logPageView();
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+            // Logged in
+            loggedIn();
+        } else {
+            document.getElementById('status').innerHTML = 'Please log ' +
+                'into this app.';
+        }
+    }
+
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+
+    function loggedIn() {
+        FB.api('/me', function(response) {
+            console.log('Successful login for: ' + response.name);
+            document.getElementById('status').innerHTML =
+                'Thanks for logging in, ' + response.name + '!';
+        });
+    }
+</script>
+
+
 <h1><%= title %></h1>
 <p>Welcome to <%= title %></p>
 
@@ -13,8 +62,9 @@
 <p>Welcome to your dashboard</p>
 
 <% } else { %>
+
 <form action="/user/login" method="post" id="login-form">
-    
+
     <label for="login-username-input"></label>
     <input type='text' name='username' placeholder='username...' id="login-username-input" required>
 
@@ -45,6 +95,13 @@
 </form>
 <% } %>
 
+<div
+        class="fb-like"
+        data-share="true"
+        data-width="450"
+        data-show-faces="true">
+</div>
+
 </body>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -52,7 +109,6 @@
 
 <% if (!locals.username) { %>
 <script>
-
     // Submit the form in the background
     submitInBackground('#add-user-form', '/user/add', (responseData, formData, formElem) => {
         if (responseData['success'] === true) {
