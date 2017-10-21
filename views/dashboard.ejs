@@ -17,6 +17,7 @@
             integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
             crossorigin="anonymous" type="text/javascript"></script>
 
+    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 
     <link href="/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" type="text/css">
 
@@ -33,9 +34,20 @@
         <textarea name="journalEntry" class="form-control" id="journal-entry-input" form="journal-entry-form"
                   placeholder="Dear Journal..." required></textarea>
     </div>
-
     <button type="submit" id="journal-submit-button" class=""><i class="fa fa-paper-plane-o fa-lg"></i></button>
 </form>
+
+<div style="margin-top: 20px">
+    <form id="mood-entry-form">
+        <textarea name="mood" class="form-control" id="mood-entry-input" style="display: none" form="mood-entry-form"></textarea>
+        <button id="happy" type="submit" class="em em-blush" onclick="updateMood(this.id)"/>
+        <button id="crying" type="submit" class="em em-cry" onclick="updateMood(this.id)"/>
+        <button id="angry" type="submit" class="em em-angry" onclick="updateMood(this.id)"/>
+        <button id="disappointed" type="submit" class="em em-disappointed" onclick="updateMood(this.id)"/>
+        <button id="expressionless" type="submit" class="em em-expressionless" onclick="updateMood(this.id)"/>
+        <button id="astonished" type="submit" class="em em-astonished" onclick="updateMood(this.id)"/>
+    </form>
+</div>
 
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -78,6 +90,39 @@
                     entryList.filter(searchTerm);
                     entryList.display();
                 });
+            } else {
+                console.log("There was a problem loading your journal entries")
+            }
+        }
+    });
+
+    // Submit the mood form in the background
+    submitInBackground('#mood-entry-form', '/moods/add', (responseData, formData, formElem) => {
+        if (responseData['success'] === true) {
+            document.getElementById('mood-entry-form').reset();
+        } else {
+            alert('There was an error adding the mood entry');
+        }
+    });
+
+    function updateMood(id){
+        document.getElementById("mood-entry-input").value = id;
+        console.log("mood updated to " + document.getElementById("mood-entry-input").value);
+    };
+
+    // Load past mood entries
+    $.ajax({
+        type: "get",
+        url: "/moods/getEntries",
+        dataType: "json",
+        success: function (responseData, textResponse, jqXHR) {
+
+            console.log(responseData);
+
+            return 0;
+
+            if (responseData['success'] === true) {
+                console.log(responseData);
             } else {
                 console.log("There was a problem loading your journal entries")
             }
