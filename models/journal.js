@@ -13,6 +13,7 @@ module.exports.add = (req, res) => {
     const insertDoc = {
         username: res.locals.username,
         journalEntry: formData.journalEntry,
+        timestamp: Date.now(),
         pos: {
             type: "Point",
             coordinates: [formData.longitude, formData.latitude]
@@ -48,8 +49,7 @@ module.exports.journalEntriesForUsername = (req, res) => {
 
     const proj = {
         _id: 0,
-        journalEntry: 1,
-        pos: 1
+        username: 0
     };
 
     req.app.locals.db.collection('journals').find(sel).project(proj).toArray((err, docs) => {
@@ -81,7 +81,8 @@ module.exports.journalEntriesNearPoint = (req, res) => {
                 $geometry: {
                     type: "Point",
                     coordinates: [formData.longitude, formData.latitude]
-                }
+                },
+                $maxDistance: 20
             }
         }
 
