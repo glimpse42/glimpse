@@ -1,7 +1,7 @@
 let express = require('express');
 let checkAPI = require('express-validator/check');
 let router = express.Router();
-let usersModel = require('../models/users');
+let usersModel = require('../models/user');
 
 // Check for form validation errors
 let validateForms = (req, res, next) => {
@@ -46,6 +46,14 @@ router.post('/login', [
     validateForms,
     usersModel.login
 ]);
+
+// Logout
+router.post('/logout', (req, res) => {
+
+        res.clearCookie('username');
+        res.redirect('/')
+    }
+);
 
 // Add a user
 router.post('/add', [
