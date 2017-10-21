@@ -13,9 +13,8 @@
 <p>Welcome to your dashboard</p>
 
 <% } else { %>
-<form action="/users/login" method="post" id="login-form">
-
-
+<form action="/user/login" method="post" id="login-form">
+    
     <label for="login-username-input"></label>
     <input type='text' name='username' placeholder='username...' id="login-username-input" required>
 
@@ -25,7 +24,7 @@
     <button type="submit">Login</button>
 </form>
 
-<form action='/users/add' method='post' id="add-user-form">
+<form action='/user/add' method='post' id="add-user-form">
 
     <label for="add-user-firstname-input"></label>
     <input type='text' name='firstname' placeholder='first name...' id="add-user-firstname-input">
@@ -55,7 +54,7 @@
 <script>
 
     // Submit the form in the background
-    submitInBackground('#add-user-form', '/users/add', (responseData, formData, formElem) => {
+    submitInBackground('#add-user-form', '/user/add', (responseData, formData, formElem) => {
         if (responseData['success'] === true) {
             document.getElementById('add-user-form').reset();
         } else {
@@ -65,7 +64,7 @@
     });
 
     // Submit the form in the background
-    submitInBackground('#update-user-email-form', '/users/update/email', (responseData, formData, formElem) => {
+    submitInBackground('#update-user-email-form', '/user/update/email', (responseData, formData, formElem) => {
         if (responseData['success'] === true) {
             document.getElementById('update-user-email-form').reset();
         } else {
