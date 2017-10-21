@@ -2,29 +2,8 @@ let express = require('express');
 let checkAPI = require('express-validator/check');
 let router = express.Router();
 let usersModel = require('../models/user');
+let {validateForms, withAuth} = require('./helpers');
 
-// Check for form validation errors
-let validateForms = (req, res, next) => {
-
-    const errors = checkAPI.validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.json({errors: errors.mapped()});
-    }
-
-    next();
-};
-
-// Check the cookie
-let withAuth = (req, res, next) => {
-
-    if (res.locals.username) {
-        res.locals.username = req.signedCookie.username;
-        next();
-    } else {
-        res.render('index', {title: 'Login'})
-    }
-};
 
 // Form field validators
 let firstnameValidator = checkAPI.body('firstname').exists().trim().matches(/[\w]{1,20}/).withMessage('Between 1 and 20 letters');
@@ -49,7 +28,6 @@ router.post('/login', [
 
 // Logout
 router.post('/logout', (req, res) => {
-
         res.clearCookie('username');
         res.redirect('/')
     }

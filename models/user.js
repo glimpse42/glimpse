@@ -1,18 +1,5 @@
 let {matchedData} = require('express-validator/filter');
-
-
-function resInfo(success, message, payload = {}) {
-
-    return {
-        success: success,
-        message: message,
-        payload: payload,
-        timestamp: new Date().getTime()
-    };
-}
-
-const resFail = (message) => resInfo(false, message);
-const resSucc = (message) => resInfo(true, message);
+let {resSucc, resFail} = require('./helpers');
 
 // Get all users
 module.exports.get = (req, res) => {

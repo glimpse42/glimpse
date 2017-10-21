@@ -9,20 +9,80 @@
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
             integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous" type="text/javascript"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
             integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous" type="text/javascript"></script>
 
+
+    <link href="/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+
+    <link href="/stylesheets/dashboard.css" rel="stylesheet" type="text/css">
 
 </head>
 <body>
 
 <% include partials/nav.ejs %>
 
-<p>Welcome, <%= username %></p>
+<form id="journal-entry-form">
+    <div class="form-group">
+        <label class="sr-only" for="journal-entry-input">Journal</label>
+        <textarea name="journalEntry" class="form-control" id="journal-entry-input" form="journal-entry-form"
+                  placeholder="Dear Journal..." required></textarea>
+    </div>
+
+    <button type="submit" id="journal-submit-button" class=""><i class="fa fa-paper-plane-o fa-lg"></i></button>
+</form>
+
 </body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="/javascripts/FormHandlers.js"></script>
+<script src="/javascripts/JournalEntryList.js"></script>
+<script>
+
+    // Submit the form in the background
+    submitWithGeo('#journal-entry-form', '/journal/add', (responseData, formData, formElem) => {
+        if (responseData['success'] === true) {
+            document.getElementById('journal-entry-form').reset();
+        } else {
+            console.log(responseData);
+            alert('There was an error adding the journal entry');
+        }
+    });
+
+    // Load past journal entries
+    $.ajax({
+        type: "get",
+        url: "/journal/getEntries",
+        dataType: "json",
+        success: function (responseData, textResponse, jqXHR) {
+
+            console.log(responseData);
+
+            return 0;
+
+            if (responseData['success'] === true) {
+
+                let entryList = new JournalEntryList("past-journal-entries", responseData['payload']);
+
+                entryList.sort();
+                entryList.display();
+
+                // Set up the handler for the journal search bar
+                searchText.keyup(function () {
+                    const searchTerm = searchText.val();
+
+                    entryList.filter(searchTerm);
+                    entryList.display();
+                });
+            } else {
+                console.log("There was a problem loading your journal entries")
+            }
+        }
+    });
+
+</script>
 </html>
