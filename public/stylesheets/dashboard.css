@@ -27,3 +27,23 @@
 button:focus {
     outline: none;
 }
+
+#journal-search-bar {
+    width: 50%;
+    margin: 20px auto;
+
+}
+
+.search-result-container {
+    padding-top: 15px;
+    border-bottom: 2px solid rgb(206, 212, 218);
+}
+
+.search-result-text {
+    font-size: 1.1em;
+}
+
+.search-result-info {
+    text-align: right;
+    font-size: 14px;
+}
