@@ -37,6 +37,7 @@
     <button type="submit" id="journal-submit-button" class=""><i class="fa fa-paper-plane-o fa-lg"></i></button>
 </form>
 
+
 <div style="margin-top: 20px">
     <form id="mood-entry-form">
         <textarea name="mood" class="form-control" id="mood-entry-input" style="display: none" form="mood-entry-form"></textarea>
@@ -49,51 +50,94 @@
     </form>
 </div>
 
+<form id="journal-search-bar" class="form-inline">
+    <div class="form-group">
+        <label for="journal-search-text" class="sr-only">Search</label>
+        <input type="text" name="search-text" id="journal-search-text" class="form-control journal-search-input">
+    </div>
+
+    <div class="form-group">
+        <label for="journal-search-near" class="">Near Me</label>
+        <input type="checkbox" name="near-me" id="journal-search-near" class="form-control journal-search-input">
+    </div>
+</form>
+
+
+<div id="past-journal-entries"></div>
+
+
 </body>
+
+<!-- Moment JS -->
+<script src="/javascripts/moment.js"></script>
+<script src="/javascripts/moment-timezone-10-20.js"></script>
+
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="/javascripts/FormHandlers.js"></script>
 <script src="/javascripts/JournalEntryList.js"></script>
 <script>
 
-    // Submit the form in the background
-    submitWithGeo('#journal-entry-form', '/journal/add', (responseData, formData, formElem) => {
-        if (responseData['success'] === true) {
-            document.getElementById('journal-entry-form').reset();
-        } else {
+    $(function () {
+        // Submit the form in the background
+        submitWithGeo('#journal-entry-form', '/journal/add', (responseData, formData, formElem) => {
+            if (responseData['success'] === true) {
+                document.getElementById('journal-entry-form').reset();
+            } else {
+                console.log(responseData);
+                alert('There was an error adding the journal entry');
+            }
+        });
+
+        // Submit the form in the background
+        submitWithGeo('#nearby-journal-entry-form', '/journal/entriesNearPoint', (responseData, formData, formElem) => {
+
+            // TODO: testing
             console.log(responseData);
-            alert('There was an error adding the journal entry');
-        }
-    });
-
-    // Load past journal entries
-    $.ajax({
-        type: "get",
-        url: "/journal/getEntries",
-        dataType: "json",
-        success: function (responseData, textResponse, jqXHR) {
-
-            console.log(responseData);
-
-            return 0;
 
             if (responseData['success'] === true) {
-
-                let entryList = new JournalEntryList("past-journal-entries", responseData['payload']);
-
-                entryList.sort();
-                entryList.display();
-
-                // Set up the handler for the journal search bar
-                searchText.keyup(function () {
-                    const searchTerm = searchText.val();
-
-                    entryList.filter(searchTerm);
-                    entryList.display();
-                });
+                //document.getElementById('journal-entry-form').reset();
             } else {
-                console.log("There was a problem loading your journal entries")
+                console.log(responseData);
+                alert('There was an error adding the journal entry');
             }
-        }
+        });
+
+        let searchText = $('#journal-search-text');
+
+        // Load past journal entries
+        $.ajax({
+            type: "get",
+            url: "/journal/getEntries",
+            dataType: "json",
+            success: function (responseData, textResponse, jqXHR) {
+
+                console.log(responseData);
+
+                if (responseData['success'] === true) {
+
+                    let entryList = new JournalEntryList("past-journal-entries", responseData['payload']);
+
+                    entryList.sort();
+                    entryList.display();
+
+                    let f = $("#journal-search-bar");
+
+                    $('#journal-search-text').keyup(() => {
+                        entryList.search(f.serializeArray());
+                        entryList.display();
+                    })
+
+                    $('#journal-search-near').change(() => {
+                        entryList.search(f.serializeArray());
+                        entryList.display();
+                    });
+
+
+                } else {
+                    console.log("There was a problem loading your journal entries")
+                }
+            }
+        });
     });
 
     // Submit the mood form in the background
