@@ -31,7 +31,7 @@ function submitInBackground(formSelector, submitURL, successCallback = () => nul
     })
 }
 
-function submitWithGeo(formSelector, submitURL, successCallback) {
+function submitWithGeo(formSelector, submitURL, successCallback, method = "post") {
     $(formSelector).on("submit", function (e) {
 
         // Prevent the form from clearing
@@ -47,7 +47,7 @@ function submitWithGeo(formSelector, submitURL, successCallback) {
             });
 
             $.ajax({
-                method: "post",
+                method: method,
                 url: submitURL,
                 data: formData,
                 dataType: "json",
