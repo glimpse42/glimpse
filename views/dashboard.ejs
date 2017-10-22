@@ -42,6 +42,69 @@
 
 <% include partials/nav.ejs %>
 
+<div id='dashboard-map'></div>
+<script>
+
+    let map;
+
+    navigator.geolocation.getCurrentPosition((position) => {
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2VudGllbnRzYWlsb3IiLCJhIjoiY2o5MjQ0dGhqM2V1cjJ3cDZwbjB2YWtlaSJ9.H7_wVqAUVOu8bJYmwc1rtg';
+        map = new mapboxgl.Map({
+            container: 'dashboard-map',
+            style: 'mapbox://styles/mapbox/light-v9',
+            zoom: 13,
+            center: [position.coords.longitude, position.coords.latitude]
+        });
+
+        map.on('load', () => {
+
+            map.addSource("journals", {
+                type: 'geojson',
+                data: '/journal/geoJSONEntries'
+            })
+
+            map.addLayer({
+                'id': 'journals',
+                'type': 'circle',
+                'source': 'journals',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 3,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    'circle-opacity': 0.75
+                }
+            });
+
+            map.on('click', 'journals', function (e) {
+                new mapboxgl.Popup()
+                    .setLngLat(e.features[0].geometry.coordinates)
+                    .setHTML(e.features[0].properties.journalEntry)
+                    .addTo(map);
+            });
+
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'journals', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'journals', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+        });
+    }, (err) => {
+        // Error handling
+        console.log(err);
+    }, {
+        "maximumAge": 300 * 1000
+    })
+
+
+</script>
+
 <form id="journal-entry-form">
     <div class="form-group">
         <label class="sr-only" for="journal-entry-input">Journal</label>
@@ -50,15 +113,6 @@
     </div>
     <button type="submit" id="journal-submit-button" class=""><i class="fa fa-paper-plane-o fa-lg"></i></button>
 </form>
-
-<div id='dashboard-map'></div>
-<script>
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic2VudGllbnRzYWlsb3IiLCJhIjoiY2o5MjQ0dGhqM2V1cjJ3cDZwbjB2YWtlaSJ9.H7_wVqAUVOu8bJYmwc1rtg';
-    let map = new mapboxgl.Map({
-        container: 'dashboard-map',
-        style: 'mapbox://styles/mapbox/light-v9'
-    });
-</script>
 
 <div id="journal-search-bar-container">
     <form id="journal-search-bar" class="form-inline">
@@ -144,6 +198,9 @@
         // Submit the form in the background
         submitWithGeo('#journal-entry-form', '/journal/add', (responseData, formData, formElem) => {
             if (responseData['success'] === true) {
+
+                map.getSource('journals').setData('/journal/geoJSONEntries');
+
                 document.getElementById('journal-entry-form').reset();
 
                 let entry = {};

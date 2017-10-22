@@ -25,6 +25,12 @@ router.get('/getEntries', [
     journalModel.journalEntriesForUsername
 ]);
 
+// Get all entries for the user in geoJSON format
+router.get('/geoJSONEntries', [
+    withAuth,
+    journalModel.geoJsonEntries
+]);
+
 router.post('/entriesNearPoint', [
     withAuth,
     entriesNearPointValidation,

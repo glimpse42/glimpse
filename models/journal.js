@@ -63,6 +63,51 @@ module.exports.journalEntriesForUsername = (req, res) => {
     });
 };
 
+
+// Get all journal entries for the user
+module.exports.geoJsonEntries = (req, res) => {
+
+    const successMsg = 'Retrieved the journal entries';
+    const failMsg = 'There was an error retrieving the journal entries';
+
+    const sel = {
+        username: res.locals.username
+    };
+
+    const proj = {
+        _id: 0,
+        username: 0
+    };
+
+    req.app.locals.db.collection('journals').find(sel).project(proj).toArray((err, docs) => {
+
+        if (err === null || err === undefined) {
+
+            // format into geoJSON
+
+            const geoJSON = docs.map((doc) => {
+                return {
+                    type: "Feature",
+                    properties: {
+                        timestamp: doc.timestamp,
+                        journalEntry: doc.journalEntry
+                    },
+                    geometry: doc.pos
+                }
+            });
+
+            const obj = {type: "FeatureCollection", features: geoJSON};
+
+            console.log(obj);
+
+            res.json(obj);
+        } else {
+            console.log(err.message);
+            res.json(resFail(failMsg));
+        }
+    });
+};
+
 // Retrieve all journal entries near a point
 module.exports.journalEntriesNearPoint = (req, res) => {
 
