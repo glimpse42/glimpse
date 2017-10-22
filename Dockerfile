@@ -1,10 +1,21 @@
-FROM alpine:3.1
+FROM node:boron
 
-RUN apk add --update nodejs
+WORKDIR /usr/src/app
 
-COPY package.json /src/package.json
-RUN cd /src; npm install
+COPY package.json .
 
-COPY . /src
+RUN npm install
+
+COPY . .
+
 EXPOSE 3000
-CMD ["node", "/src/bin/www"]
+CMD [ "node", "/usr/src/app/bin/www"]
+
+#RUN apk add --update nodejs
+#
+#COPY package.json /src/package.json
+#RUN cd /src; npm install
+#
+#COPY . /src
+#EXPOSE 3000
+#CMD ["node", "/src/bin/www"]
