@@ -26,6 +26,17 @@
 </head>
 <body>
 
+<form id="mood-entry-form">
+    <textarea name="mood" class="form-control" id="mood-entry-input" style="display: none"
+              form="mood-entry-form"></textarea>
+    <button id="happy" type="submit" class="em em-blush" onclick="updateMood(this.id)"></button>
+    <button id="crying" type="submit" class="em em-cry" onclick="updateMood(this.id)"></button>
+    <button id="angry" type="submit" class="em em-angry" onclick="updateMood(this.id)"></button>
+    <button id="disappointed" type="submit" class="em em-disappointed" onclick="updateMood(this.id)"></button>
+    <button id="expressionless" type="submit" class="em em-expressionless" onclick="updateMood(this.id)"></button>
+    <button id="astonished" type="submit" class="em em-astonished" onclick="updateMood(this.id)"></button>
+</form>
+
 <% include partials/nav.ejs %>
 
 <form id="journal-entry-form">
@@ -37,19 +48,6 @@
     <button type="submit" id="journal-submit-button" class=""><i class="fa fa-paper-plane-o fa-lg"></i></button>
 </form>
 
-
-<div style="margin-top: 20px">
-    <form id="mood-entry-form">
-        <textarea name="mood" class="form-control" id="mood-entry-input" style="display: none" form="mood-entry-form"></textarea>
-        <button id="happy" type="submit" class="em em-blush" onclick="updateMood(this.id)"/>
-        <button id="crying" type="submit" class="em em-cry" onclick="updateMood(this.id)"/>
-        <button id="angry" type="submit" class="em em-angry" onclick="updateMood(this.id)"/>
-        <button id="disappointed" type="submit" class="em em-disappointed" onclick="updateMood(this.id)"/>
-        <button id="expressionless" type="submit" class="em em-expressionless" onclick="updateMood(this.id)"/>
-        <button id="astonished" type="submit" class="em em-astonished" onclick="updateMood(this.id)"/>
-    </form>
-</div>
-
 <form id="journal-search-bar" class="form-inline">
     <div class="form-group">
         <label for="journal-search-text" class="sr-only">Search</label>
@@ -57,14 +55,13 @@
     </div>
 
     <div class="form-group">
-        <label for="journal-search-near" class="">Near Me</label>
-        <input type="checkbox" name="near-me" id="journal-search-near" class="form-control journal-search-input">
+        <label for="journal-search-near" class="sr-only"></label>
+        <button type="button" id="journal-search-near"><i class="fa fa-location-arrow fa-2x"></i></button>
     </div>
 </form>
 
 
 <div id="past-journal-entries"></div>
-
 
 </body>
 
@@ -78,15 +75,8 @@
 <script>
 
     $(function () {
-        // Submit the form in the background
-        submitWithGeo('#journal-entry-form', '/journal/add', (responseData, formData, formElem) => {
-            if (responseData['success'] === true) {
-                document.getElementById('journal-entry-form').reset();
-            } else {
-                console.log(responseData);
-                alert('There was an error adding the journal entry');
-            }
-        });
+
+        let entryList;
 
         // Submit the form in the background
         submitWithGeo('#nearby-journal-entry-form', '/journal/entriesNearPoint', (responseData, formData, formElem) => {
@@ -115,21 +105,20 @@
 
                 if (responseData['success'] === true) {
 
-                    let entryList = new JournalEntryList("past-journal-entries", responseData['payload']);
+                    entryList = new JournalEntryList("past-journal-entries", responseData['payload']);
 
                     entryList.sort();
                     entryList.display();
 
-                    let f = $("#journal-search-bar");
-
+                    // Search for keywords
                     $('#journal-search-text').keyup(() => {
-                        entryList.search(f.serializeArray());
+                        entryList.filter(searchText.val());
                         entryList.display();
                     })
 
-                    $('#journal-search-near').change(() => {
-                        entryList.search(f.serializeArray());
-                        entryList.display();
+                    // Find nearby entries
+                    $('#journal-search-near').click(() => {
+                        entryList.filterNear(30);
                     });
 
 
@@ -138,21 +127,56 @@
                 }
             }
         });
+
+        // Submit the form in the background
+        submitWithGeo('#journal-entry-form', '/journal/add', (responseData, formData, formElem) => {
+            if (responseData['success'] === true) {
+                document.getElementById('journal-entry-form').reset();
+
+                let entry = {};
+
+                entry['timestamp'] = responseData['timestamp'];
+
+                // Add proper form fields
+                formData.forEach((field) => {
+                    entry[field['name']] = field['value'];
+                });
+
+                entry.pos = {
+                    type: "Point",
+                    coordinates: [entry.longitude, entry.latitude]
+                }
+
+                // TODO: Debugging
+                console.log(entry);
+
+                entryList.entries.push(entry);
+
+                entryList.sort();
+                entryList.display();
+
+                // Add the journal entry to the page
+            } else {
+                console.log(responseData);
+                alert('There was an error adding the journal entry');
+            }
+        });
+
+        // Submit the mood form in the background
+        submitWithGeo('#mood-entry-form', '/moods/add', (responseData, formData, formElem) => {
+            if (responseData['success'] === true) {
+                document.getElementById('mood-entry-form').reset();
+            } else {
+                alert('There was an error adding the mood entry');
+            }
+        });
     });
 
-    // Submit the mood form in the background
-    submitInBackground('#mood-entry-form', '/moods/add', (responseData, formData, formElem) => {
-        if (responseData['success'] === true) {
-            document.getElementById('mood-entry-form').reset();
-        } else {
-            alert('There was an error adding the mood entry');
-        }
-    });
 
-    function updateMood(id){
+    function updateMood(id) {
         document.getElementById("mood-entry-input").value = id;
         console.log("mood updated to " + document.getElementById("mood-entry-input").value);
-    };
+    }
 
     // Load past mood entries
     $.ajax({

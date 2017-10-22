@@ -29,7 +29,6 @@ button:focus {
 }
 
 #journal-search-bar {
-    width: 50%;
     margin: 20px auto;
 
 }
@@ -46,4 +45,10 @@ button:focus {
 .search-result-info {
     text-align: right;
     font-size: 14px;
+}
+
+#mood-entry-form {
+    position: absolute;
+    top: 5px;
+    left: 5px;
 }

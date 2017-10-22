@@ -118,28 +118,25 @@ function JournalEntryList(elementId, entries) {
         const searchTerm = rawSearchTerm.toLowerCase();
 
         this.resultSet = this.entries.filter(function (elem) {
-            return elem.journalEntry.includes(searchTerm);
+            return elem.journalEntry.toLowerCase().includes(searchTerm);
         });
     };
 
-    /** Converts numeric degrees to radians */
-    if (typeof(Number.prototype.toRad) === "undefined") {
-        Number.prototype.toRad = function () {
-            return this * Math.PI / 180;
-        }
-    }
+    const toRad = (n) => {
+        return n * Math.PI / 180;
+    };
 
-    function distance(lon1, lat1, lon2, lat2) {
+    const distance = (lon1, lat1, lon2, lat2) => {
         let R = 6371; // Radius of the earth in km
-        let dLat = (lat2 - lat1).toRad();  // Javascript functions in radians
-        let dLon = (lon2 - lon1).toRad();
+        let dLat = toRad(lat2 - lat1);  // Javascript functions in radians
+        let dLon = toRad(lon2 - lon1);
         let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) *
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
         let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         let d = R * c; // Distance in km
         return d * 1000; // Distance in m
-    }
+    };
 
     // Find all entries near the given coordinates
     this.filterNear = function (radius) {
@@ -157,7 +154,7 @@ function JournalEntryList(elementId, entries) {
                 position.coords.latitude
             ];
 
-            this.resultSet = this.resultSet.filter(function (elem) {
+            this.resultSet = this.entries.filter(function (elem) {
 
                 const d = distance(currPos[0], currPos[1], elem.pos.coordinates[0], elem.pos.coordinates[1]);
 
@@ -165,6 +162,8 @@ function JournalEntryList(elementId, entries) {
 
                 return d < radius;
             });
+
+            this.display();
         };
 
         // Callback when user position cannot be obtained
