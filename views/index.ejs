@@ -61,9 +61,9 @@
     }
 </script>
 
-
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
+<div style="text-align: center">
+    <h1>Glimpse</h1>
+</div>
 
 <% if (locals.username) { %>
 
@@ -71,43 +71,59 @@
 
 <% } else { %>
 
-<form action="/user/login" method="post" id="login-form">
+<div style="text-align: center">
+    <form action="/user/login" method="post" id="login-form">
 
-    <label for="login-username-input"></label>
-    <input type='text' name='username' placeholder='username...' id="login-username-input" required>
+        <label for="login-username-input"></label>
+        <input type='text' name='username' placeholder='Username' id="login-username-input" required>
+        <br/>
+        <br/>
+        <label for="login-password-input"></label>
+        <input type='password' name='password' placeholder='Password' id="login-password-input" required>
+        <br/>
+        <br/>
+        <button type="submit">Login</button>
+        <br/>
+        <br/>
+    </form>
+</div>
 
-    <label for="login-password-input"></label>
-    <input type='password' name='password' placeholder='password...' id="login-password-input" required>
+<div style="text-align: center">
+    <form action='/user/add' method='post' id="add-user-form">
 
-    <button type="submit">Login</button>
-</form>
+        <label for="add-user-firstname-input"></label>
+        <input type='text' name='firstname' placeholder='First Name' id="add-user-firstname-input">
 
-<form action='/user/add' method='post' id="add-user-form">
-
-    <label for="add-user-firstname-input"></label>
-    <input type='text' name='firstname' placeholder='first name...' id="add-user-firstname-input">
-
-    <label for="add-user-lastname-input"></label>
-    <input type='text' name='lastname' placeholder='last name...' id="add-user-lastname-input">
-
-    <label for="add-user-username-input"></label>
-    <input type='text' name='username' placeholder='username...' id="add-user-username-input" required>
-
-    <label for="add-user-password-input"></label>
-    <input type='password' name='password' placeholder='password...' id="add-user-password-input" required>
-
-    <label for="add-user-email-input"></label>
-    <input type="email" name="email" placeholder="your@email.com" id="add-user-email-input" required>
-
-    <button type='submit'>Add</button>
-</form>
+        <label for="add-user-lastname-input"></label>
+        <input type='text' name='lastname' placeholder='Last Name' id="add-user-lastname-input">
+        <br/>
+        <br/>
+        <label for="add-user-username-input"></label>
+        <input type='text' name='username' placeholder='Username' id="add-user-username-input" required>
+        <br/>
+        <br/>
+        <label for="add-user-password-input"></label>
+        <input type='password' name='password' placeholder='Password' id="add-user-password-input" required>
+        <br/>
+        <br/>
+        <label for="add-user-email-input"></label>
+        <input type="email" name="email" placeholder="your@email.com" id="add-user-email-input" required>
+        <br/>
+        <br/>
+        <button type='submit'>Add</button>
+        <br/>
+        <br/>
+    </form>
+</div>
 <% } %>
 
-<div
-        class="fb-like"
-        data-share="true"
-        data-width="450"
-        data-show-faces="true">
+<div style="text-align: center">
+    <div
+            class="fb-like"
+            data-share="true"
+            data-width="450"
+            data-show-faces="true">
+    </div>
 </div>
 
 </body>
