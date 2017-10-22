@@ -11,4 +11,9 @@ router.get('/', function (req, res, next) {
     }
 });
 
+router.get('/qrcode', function(req, res, next) {
+    res.render('qrcode', { title: 'Usher QR Code Login' });
+});
+
+
 module.exports = router;
