@@ -47,6 +47,7 @@
 
     let map;
 
+    // Get current position, then initialize map
     navigator.geolocation.getCurrentPosition((position) => {
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2VudGllbnRzYWlsb3IiLCJhIjoiY2o5MjQ0dGhqM2V1cjJ3cDZwbjB2YWtlaSJ9.H7_wVqAUVOu8bJYmwc1rtg';
         map = new mapboxgl.Map({
@@ -68,10 +69,14 @@
                 'type': 'circle',
                 'source': 'journals',
                 'paint': {
+                    'circle-color': '#80bdfd',
                     // make circles larger as the user zooms from z12 to z22
                     'circle-radius': {
-                        'base': 3,
-                        'stops': [[12, 2], [22, 180]]
+                        'base': 4,
+                        'stops': [
+                            [12, 3.5],
+                            [20, 3]
+                        ]
                     },
                     'circle-opacity': 0.75
                 }
@@ -99,11 +104,16 @@
         // Error handling
         console.log(err);
     }, {
-        "maximumAge": 300 * 1000
+        "maximumAge": 10 * 1000
     })
 
 
 </script>
+
+
+<i id="map-toggle-down" class="fa fa-caret-down fa-2x map-toggle"></i>
+<i id="map-toggle-up" class="fa fa-caret-up fa-2x map-toggle" style="display: none;"></i>
+
 
 <form id="journal-entry-form">
     <div class="form-group">
@@ -123,7 +133,8 @@
 
         <div class="form-group">
             <label for="journal-search-near" class="sr-only"></label>
-            <button type="button" id="journal-search-near"><i class="fa fa-location-arrow fa-2x"></i></button>
+            <button type="button" id="journal-search-near" class="transparent-button"><i
+                        class="fa fa-location-arrow fa-2x"></i></button>
         </div>
     </form>
 </div>
@@ -141,7 +152,28 @@
 <script src="/javascripts/JournalEntryList.js"></script>
 <script>
 
+    function expandMap() {
+        $('#dashboard-map').css('height', '500px')
+    }
+
+    function shrinkMap() {
+        $('#dashboard-map').css('height', '300px')
+    }
+
     $(function () {
+
+
+        $('#map-toggle-down').click(() => {
+            expandMap()
+            map.resize();
+            $('.map-toggle').toggle();
+        });
+
+        $('#map-toggle-up').click(() => {
+            shrinkMap()
+            map.resize();
+            $('.map-toggle').toggle();
+        });
 
         let entryList;
 
