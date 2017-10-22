@@ -31,6 +31,7 @@ function submitInBackground(formSelector, submitURL, successCallback = () => nul
     })
 }
 
+
 function submitWithGeo(formSelector, submitURL, successCallback, method = "post") {
 
     let formElem = $(formSelector);
