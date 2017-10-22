@@ -1,0 +1,12 @@
+<% include layout.ejs %>
+<h1></h1>
+<div id="out-container">
+    <h2>Welcome!</h2><img id="user-photo" src="/images/default_badge.jpg"/>
+    <p id="user-name">John Doe</p>
+    <p id="user-title">Employee</p><a href="/qrcode">Scan another QR code</a>
+</div>
+<div id="in-container">
+    <p>Scan the QR Code with your Usher badge to log in.</p>
+    <div id="qr-container"><img id="qr-image" src="/images/loading_qrcode2.gif" style="height:250px; width:250px"/></div>
+</div><a href="/">Back to home page</a>
+<script src="/javascripts/qrlogin.js"></script>

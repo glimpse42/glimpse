@@ -6,3 +6,33 @@ body {
 a {
   color: #00B7FF;
 }
+
+.usher-img {
+  width: 150px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+#photo-container {
+  height: 250px;
+  padding-bottom: 10px;
+  width: 250px;
+}
+
+#user-photo {
+  width: 250px;
+}
+
+#user-name {
+  font-size: 18px;
+  line-height: 33px;
+}
+
+#user-title {
+  font-size: 16px;
+  line-height: 30px;
+}
+
+#out-container {
+  padding: 20px 0;
+}
