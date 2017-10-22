@@ -13,6 +13,7 @@ module.exports.add = (req, res) => {
     const insertDoc = {
         username: res.locals.username,
         journalEntry: formData.journalEntry,
+        timestamp: Date.now(),
         pos: {
             type: "Point",
             coordinates: [formData.longitude, formData.latitude]
@@ -48,7 +49,7 @@ module.exports.journalEntriesForUsername = (req, res) => {
 
     const proj = {
         _id: 0,
-        journalEntry: 1
+        username: 0
     };
 
     req.app.locals.db.collection('journals').find(sel).project(proj).toArray((err, docs) => {
@@ -63,12 +64,15 @@ module.exports.journalEntriesForUsername = (req, res) => {
 };
 
 // Retrieve all journal entries near a point
-module.exports.entriesNearPoint = (req, res) => {
+module.exports.journalEntriesNearPoint = (req, res) => {
 
+    // Validated form data
     const formData = matchedData(req);
 
-    const successMsg = 'Retrieved the journal entries';
-    const failMsg = 'There was an error retrieving the journal entries';
+    console.log(formData);
+
+    const successMsg = 'Retrieved the journal entries near point';
+    const failMsg = 'There was an error retrieving the journal entries near the point';
 
     const sel = {
         username: res.locals.username,
@@ -77,7 +81,8 @@ module.exports.entriesNearPoint = (req, res) => {
                 $geometry: {
                     type: "Point",
                     coordinates: [formData.longitude, formData.latitude]
-                }
+                },
+                $maxDistance: 20
             }
         }
 

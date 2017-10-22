@@ -10,6 +10,8 @@ let geoCoordValidator = checkAPI.body(['latitude', 'longitude']).exists().isFloa
 
 const addJournalEntryValidation = [journalEntryValidator, geoCoordValidator];
 
+const entriesNearPointValidation = [geoCoordValidator];
+
 // Add a journal entry
 router.post('/add', [
     withAuth,
@@ -21,6 +23,12 @@ router.post('/add', [
 router.get('/getEntries', [
     withAuth,
     journalModel.journalEntriesForUsername
+]);
+
+router.post('/entriesNearPoint', [
+    withAuth,
+    entriesNearPointValidation,
+    journalModel.journalEntriesNearPoint
 ]);
 
 module.exports = router;
