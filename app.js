@@ -8,6 +8,7 @@ let request = require('request').defaults({encoding: null })
 let index = require('./routes/index');
 let user = require('./routes/user');
 let journal = require('./routes/journal');
+let moods = require('./routes/moods');
 
 let app = express();
 
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
 app.use('/', index);
 app.use('/user', user);
 app.use('/journal', journal);
+app.use('/moods', moods);
 
 app.get('/getQRCode', function(req, res){
     var requestOptions = {

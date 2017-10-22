@@ -1,24 +1,112 @@
 <!DOCTYPE html>
 <html>
+<style>
+    body  {
+        background-image: url('images/background.jpeg');
+        background-color: #cccccc;
+    }
+
+    .form-style-6{
+      font: 95% Arial, Helvetica, sans-serif;
+      max-width: 400px;
+      margin: 10px auto;
+      padding: 16px;  background-color: rgba(255, 0, 0, 0.4);
+    }
+
+    .form-style-6 h1{
+        background: #43D1AF;
+        padding: 20px 0;
+        font-size: 140%;
+        font-weight: 300;
+        text-align: center;
+        color: #fff;
+        margin: -16px -16px 16px -16px;
+    }
+    .form-style-6 input[type="text"],
+    .form-style-6 input[type="date"],
+    .form-style-6 input[type="datetime"],
+    .form-style-6 input[type="email"],
+    .form-style-6 input[type="number"],
+    .form-style-6 input[type="search"],
+    .form-style-6 input[type="time"],
+    .form-style-6 input[type="url"],
+    .form-style-6 textarea,
+    .form-style-6 select
+    {
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        outline: none;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        width: 100%;
+        background: #fff;
+        margin-bottom: 4%;
+        border: 1px solid #ccc;
+        padding: 3%;
+        color: #555;
+        font: 95% Arial, Helvetica, sans-serif;
+    }
+    .form-style-6 input[type="text"]:focus,
+    .form-style-6 input[type="date"]:focus,
+    .form-style-6 input[type="datetime"]:focus,
+    .form-style-6 input[type="email"]:focus,
+    .form-style-6 input[type="number"]:focus,
+    .form-style-6 input[type="search"]:focus,
+    .form-style-6 input[type="time"]:focus,
+    .form-style-6 input[type="url"]:focus,
+    .form-style-6 textarea:focus,
+    .form-style-6 select:focus
+    {
+        box-shadow: 0 0 5px #43D1AF;
+        padding: 3%;
+        border: 1px solid #43D1AF;
+    }
+
+    .form-style-6 input[type="submit"],
+    .form-style-6 input[type="button"]{
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        width: 100%;
+        padding: 3%;
+        background: #43D1AF;
+        border-bottom: 2px solid #30C29E;
+        border-top-style: none;
+        border-right-style: none;
+        border-left-style: none;
+        color: #fff;
+    }
+    .form-style-6 input[type="submit"]:hover,
+    .form-style-6 input[type="button"]:hover{
+        background: #2EBC99;
+    }
+</style>
+
 <head>
-    <title><%= title %></title>
+    <title>Glimpse</title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <% include layout.ejs %>
 
 <h1></h1><img class="usher-img" src="/images/usherbackground.png"/>
 <h2><a href="/qrcode">Usher QR Code Login</a></h2>
-<!-- <p>(view source code <a target="_blank" href="https://github.com/zimeibian/JavaScriptUsherAPIsample">on GitHub</a>)</p> -->
 
-<div class="fb-login-button" data-show-faces="true" data-width="200" data-max-rows="1">Login w/ Facebook</div>
-
-<div id="status">
+<div style="text-align: center">
+    <div class="fb-login-button" data-show-faces="true" data-width="200" data-max-rows="1">Login w/Facebook</div>
+    </div>
+    <div id="status">
 </div>
 
 <body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
 <script>
+
     window.fbAsyncInit = function() {
         FB.init({
             appId      : '643524489369797',
@@ -26,12 +114,17 @@
             version    : 'v2.10'
         });
         FB.AppEvents.logPageView();
+
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
     };
 
     (function(d, s, id){
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) {return;}
         js = d.createElement(s); js.id = id;
+
         js.src = "//connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
@@ -46,9 +139,6 @@
         }
     }
 
-    FB.getLoginStatus(function(response) {
-        statusChangeCallback(response);
-    });
 
     function loggedIn() {
         FB.api('/me', function(response) {
@@ -59,9 +149,10 @@
     }
 </script>
 
+<div style="text-align: center">
+    <h1>Welcome to Glimpse</h1>
+</div>
 
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
 
 <% if (locals.username) { %>
 
@@ -69,43 +160,60 @@
 
 <% } else { %>
 
-<form action="/user/login" method="post" id="login-form">
+<div class="form-style-6">
+    <form action="/user/login" method="post" id="login-form">
 
-    <label for="login-username-input"></label>
-    <input type='text' name='username' placeholder='username...' id="login-username-input" required>
+        <label for="login-username-input"></label>
+        <input type='text' name='username' placeholder='Enter Username' id="login-username-input" required>
+        <br/>
+        <br/>
+        <label for="login-password-input"></label>
+        <input type='password' name='password' placeholder='Enter Password...' id="login-password-input" required>
+        <br/>
+        <br/>
+        <button type="button" class="btn btn-warning">Login</button>
+        <br/>
+        <br/>
+    </form>
+</div>
 
-    <label for="login-password-input"></label>
-    <input type='password' name='password' placeholder='password...' id="login-password-input" required>
+<div class="form-style-6">
+    <form action='/user/add' method='post' id="add-user-form">
 
-    <button type="submit">Login</button>
-</form>
+        <label for="add-user-firstname-input"></label>
+        <input type='text' name='firstname' placeholder='Enter First Name...' id="add-user-firstname-input">
 
-<form action='/user/add' method='post' id="add-user-form">
+        <label for="add-user-lastname-input"></label>
+        <input type='text' name='lastname' placeholder='Enter Last Name...' id="add-user-lastname-input">
+        <br/>
+        <br/>
+        <label for="add-user-username-input"></label>
+        <input type='text' name='username' placeholder='Enter Username.' id="add-user-username-input" required>
+        <br/>
+        <br/>
+        <label for="add-user-password-input"></label>
+        <input type='password' name='password' placeholder='Enter Password...' id="add-user-password-input" required>
+        <br/>
+        <br/>
+        <label for="add-user-email-input"></label>
+        <input type="email" name="email" placeholder="Enter Your Email" id="add-user-email-input" required>
+        <br/>
+        <br/>
+        <button type="button" class="btn btn-warning">Add</button>
+        <br/>
+        <br/>
 
-    <label for="add-user-firstname-input"></label>
-    <input type='text' name='firstname' placeholder='first name...' id="add-user-firstname-input">
-
-    <label for="add-user-lastname-input"></label>
-    <input type='text' name='lastname' placeholder='last name...' id="add-user-lastname-input">
-
-    <label for="add-user-username-input"></label>
-    <input type='text' name='username' placeholder='username...' id="add-user-username-input" required>
-
-    <label for="add-user-password-input"></label>
-    <input type='password' name='password' placeholder='password...' id="add-user-password-input" required>
-
-    <label for="add-user-email-input"></label>
-    <input type="email" name="email" placeholder="your@email.com" id="add-user-email-input" required>
-
-    <button type='submit'>Add</button>
-</form>
+    </form>
+</div>
 <% } %>
 
-<div
-        class="fb-like"
-        data-share="true"
-        data-width="450"
-        data-show-faces="true">
+<div style="text-align: center">
+    <div
+            class="fb-like"
+            data-share="true"
+            data-width="450"
+            data-show-faces="true">
+    </div>
 </div>
 
 </body>

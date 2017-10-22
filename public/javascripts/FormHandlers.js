@@ -32,15 +32,19 @@ function submitInBackground(formSelector, submitURL, successCallback = () => nul
 }
 
 function submitWithGeo(formSelector, submitURL, successCallback, method = "post") {
-    $(formSelector).on("submit", function (e) {
+
+    let formElem = $(formSelector);
+
+    formElem.on("submit", function (e) {
 
         // Prevent the form from clearing
         e.preventDefault();
 
+        // Get form data
+        let formData = $(this).serializeArray();
+
         // Post the form data to the server
         function sendForm(extraData = []) {
-
-            let formData = $(formSelector).serializeArray();
 
             extraData.forEach((item) => {
                 formData.push(item);
@@ -53,7 +57,7 @@ function submitWithGeo(formSelector, submitURL, successCallback, method = "post"
                 dataType: "json",
                 success: function (responseData, textStatus, jqXHR) {
 
-                    successCallback(responseData);
+                    successCallback(responseData, formData, formElem);
                 }
             });
         }
