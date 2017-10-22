@@ -28,14 +28,13 @@ button:focus {
     outline: none;
 }
 
-#journal-search-bar {
-    margin: 20px auto;
-
-}
-
 .search-result-container {
     padding-top: 15px;
     border-bottom: 2px solid rgb(206, 212, 218);
+}
+
+.search-result-container:hover {
+    border-color: rgb(128, 189, 253);
 }
 
 .search-result-text {
@@ -51,4 +50,20 @@ button:focus {
     position: absolute;
     top: 5px;
     left: 5px;
+}
+
+#journal-search-bar {
+    width: 20%;
+    margin: auto;
+}
+
+#journal-search-bar-container {
+    margin: 25px 0;
+}
+
+#dashboard-map {
+    width: 100%;
+    height: 300px;
+
+    margin: 30px 0;
 }
