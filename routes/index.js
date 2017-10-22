@@ -11,8 +11,12 @@ router.get('/', function (req, res, next) {
     }
 });
 
-router.get('/qrcode', function(req, res, next) {
-    res.render('qrcode', { title: 'Usher QR Code Login' });
+router.get('/viz', (req, res, next) => {
+    res.render('visualization');
+});
+
+router.get('/qrcode', function (req, res, next) {
+    res.render('qrcode', {title: 'Usher QR Code Login'});
 });
 
 
