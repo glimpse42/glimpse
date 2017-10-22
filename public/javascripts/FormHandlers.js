@@ -31,7 +31,7 @@ function submitInBackground(formSelector, submitURL, successCallback = () => nul
     })
 }
 
-
+// Submit a form, after adding fields for the user's current latitude and longitude
 function submitWithGeo(formSelector, submitURL, successCallback, method = "post") {
 
     let formElem = $(formSelector);
