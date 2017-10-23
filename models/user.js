@@ -24,22 +24,19 @@ module.exports.add = (req, res) => {
     const successMsg = 'Added the user';
     const failMsg = 'There was an error adding the user';
 
-    req.app.locals.db.collection('users').insertOne(insertDoc, (err, writeResult) => {
+    req.app.locals.db.collection('users').insertOne(insertDoc).then((writeResult) => {
 
-        if (err === null || err === undefined) {
-
-            if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
-                res.json(resSucc(successMsg));
-            } else {
-                res.json(writeResult);
-            }
+        if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
+            res.json(resSucc(successMsg));
         } else {
-            console.log(err.message);
-            res.json(resFail(failMsg));
+            res.json(writeResult);
         }
+
+    }, (reason) => {
+        console.log(reason);
+        res.json(resFail(failMsg));
     });
 };
-
 
 
 // Check a user's credentials
@@ -57,30 +54,27 @@ module.exports.login = (req, res) => {
         }
     };
 
-    req.app.locals.db.collection("users").findOne(insertDoc, options, (err, userObj) => {
+    req.app.locals.db.collection("users").findOne(insertDoc, options).then((userObj) => {
 
         const sessionLength = 7 * 24 * 60 * 60 * 1000;
 
-        if (err === null || err === undefined) {
-
-            if (userObj === null) {
-                res.render('index', {title: 'Login'})
-            } else {
-
-                // Set the authentication cookie
-                res.cookie('username', userObj.username, {
-                    httpOnly: true,
-                    maxAge: sessionLength,
-                    signed: true
-                });
-
-                res.redirect('/');
-            }
-
+        if (userObj === null) {
+            res.render('index', {title: 'Login'})
         } else {
-            console.log(err.message);
-            res.json(resFail(failMsg));
+
+            // Set the authentication cookie
+            res.cookie('username', userObj.username, {
+                httpOnly: true,
+                maxAge: sessionLength,
+                signed: true
+            });
+
+            res.redirect('/');
         }
+
+    }, (reason) => {
+        console.log(reason);
+        res.json(resFail(failMsg));
     });
 
 };
@@ -99,25 +93,29 @@ module.exports.remove = (req, res) => {
 
     const sel = matchedData(req);
 
-    req.app.locals.db.collection('users').deleteOne(sel, (err, writeResult) => {
+    req.app.locals.db.collection('users').deleteOne(sel).then((writeResult) => {
 
-        if (err === null || err === undefined) {
-
-            if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
-                res.json(resSucc(successMsg));
-            } else {
-                console.log(writeResult);
-                res.json(resFail(failMsg));
-            }
+        if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
+            res.json(resSucc(successMsg));
         } else {
-            console.log(err.message);
+            console.log(writeResult);
             res.json(resFail(failMsg));
         }
+
+    }, (reason) => {
+        console.log(reason);
+        res.json(resFail(failMsg));
     });
 
 };
 
-// Update a user's email
+
+/**
+ * Update a user's email
+ *
+ * @param req
+ * @param res
+ */
 module.exports.updateEmail = (req, res) => {
 
     const successMsg = 'Updated the user email';
@@ -132,30 +130,33 @@ module.exports.updateEmail = (req, res) => {
     };
 
     // Insert a document into the database
-    req.app.locals.db.collection('users').updateOne(sel, upd, (err, writeResult) => {
+    req.app.locals.db.collection('users').updateOne(sel, upd).then((writeResult) => {
 
-        if (err === null || err === undefined) {
-
-            if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
-                res.json(resSucc(successMsg));
-            } else {
-                res.json(writeResult);
-            }
+        if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
+            res.json(resSucc(successMsg));
         } else {
-            console.log(err.message);
-            res.json(resFail(failMsg));
+            res.json(writeResult);
         }
+    }, (reason) => {
+        console.log(reason);
+        res.json(resFail(failMsg));
     });
 };
 
+
+/**
+ * Update the about message for a user
+ *
+ * @param req
+ * @param res
+ */
 module.exports.updateAbout = (req, res) => {
 
     const successMsg = 'Updated the about message';
     const failMsg = 'There was an error updating the about message';
 
-    // TODO: Get the username from the session
     let sel = {
-        username: "bobbyjones"
+        username: res.locals.username
     };
 
     let upd = {
@@ -163,19 +164,17 @@ module.exports.updateAbout = (req, res) => {
     };
 
     // Insert a document into the database
-    req.app.locals.db.collection('users').updateOne(sel, upd, (err, writeResult) => {
+    req.app.locals.db.collection('users').updateOne(sel, upd).then((writeResult) => {
 
-        if (err === null || err === undefined) {
-
-            if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
-                res.json(resSucc(successMsg));
-            } else {
-                res.json(writeResult);
-            }
+        if (writeResult.result.n === 1 && writeResult.result.ok === 1) {
+            res.json(resSucc(successMsg));
         } else {
-            console.log(err.message);
-            res.json(resFail(failMsg));
+            res.json(writeResult);
         }
+
+    }, (reason) => {
+        console.log(reason);
+        res.json(resFail(failMsg));
     });
 
 };
