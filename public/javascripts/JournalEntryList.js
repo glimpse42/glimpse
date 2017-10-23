@@ -31,7 +31,7 @@ function JournalEntryList(elementId, entries) {
 
             let timestamp = document.createElement('div');
             timestamp.classList.add('search-result-info');
-            timestamp.textContent = moment(entry.timestamp).format('YYYY-MM-DD HH:MM:SS');
+            timestamp.textContent = moment(entry.timestamp).format('YYYY-MM-DD HH:mm:ss');
 
             // Assemble the element
             d.append(about);
